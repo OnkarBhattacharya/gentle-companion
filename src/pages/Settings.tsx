@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { NavBar } from '../components/NavBar'
 import { CrisisButton } from '../components/CrisisButton'
-import { Trash2, Moon, Sun, Bell, BellOff, UserPlus, Check } from 'lucide-react'
+import { Trash2, Moon, Sun, Bell, BellOff, UserPlus, Check, BookOpen } from 'lucide-react'
 
 export default function Settings() {
+  const navigate = useNavigate()
   const {
     userName, theme, toggleTheme, deleteAllData,
     notificationsEnabled, setNotificationsEnabled,
@@ -37,6 +39,25 @@ export default function Settings() {
       <div className="page fade-in">
         <h1 className="section-title">Settings</h1>
         <p className="section-sub">Your preferences and privacy controls.</p>
+
+        {/* User Guide */}
+        <div className="card" style={{ marginBottom: 16 }}>
+          <button
+            onClick={() => navigate('/guide')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+              background: 'transparent', padding: 0, textAlign: 'left',
+            }}
+          >
+            <BookOpen size={20} style={{ color: 'var(--sage)', flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, marginBottom: 2 }}>User Guide</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-soft)' }}>
+                Learn how to use every feature in Gentle Companion.
+              </div>
+            </div>
+          </button>
+        </div>
 
         {/* Appearance */}
         <div className="card" style={{ marginBottom: 16 }}>

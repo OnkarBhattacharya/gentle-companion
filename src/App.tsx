@@ -10,6 +10,7 @@ import Reflect from './pages/Reflect'
 import Insights from './pages/Insights'
 import Letter from './pages/Letter'
 import Settings from './pages/Settings'
+import Guide from './pages/Guide'
 
 function AppRoutes() {
   const { onboarded, tourDone } = useApp()
@@ -28,6 +29,7 @@ function AppRoutes() {
       <Route path="/insights" element={guard(<Insights />)} />
       <Route path="/letter" element={guard(<Letter />)} />
       <Route path="/settings" element={guard(<Settings />)} />
+      <Route path="/guide" element={guard(<Guide />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
