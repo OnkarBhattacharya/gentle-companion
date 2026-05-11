@@ -56,18 +56,18 @@ Understanding the architecture before contributing prevents the most common mist
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  index.html                                                      │
+│  index.html                                                     │
 │  · CSP meta tag (no inline scripts, no external sources)        │
 │  · No external font CDN                                         │
 └────────────────────────────┬────────────────────────────────────┘
                              │
 ┌────────────────────────────▼────────────────────────────────────┐
-│  src/main.tsx                                                    │
+│  src/main.tsx                                                   │
 │  · React.StrictMode mount                                       │
 └────────────────────────────┬────────────────────────────────────┘
                              │
 ┌────────────────────────────▼────────────────────────────────────┐
-│  src/App.tsx                                                     │
+│  src/App.tsx                                                    │
 │  · AppProvider wraps BrowserRouter                              │
 │  · AppRoutes reads onboarded + tourDone to decide entry point   │
 │  · All routes except /welcome and /tour are guarded             │
@@ -76,7 +76,7 @@ Understanding the architecture before contributing prevents the most common mist
          ┌───────────────────┼───────────────────┐
          │                   │                   │
 ┌────────▼────────┐ ┌────────▼────────┐ ┌────────▼────────┐
-│  AppContext.tsx  │ │    Pages        │ │   Components    │
+│  AppContext.tsx │ │    Pages        │ │   Components    │
 │                 │ │                 │ │                 │
 │  Single source  │ │  One file per   │ │  CrisisButton   │
 │  of truth.      │ │  route. Consume │ │  NavBar         │

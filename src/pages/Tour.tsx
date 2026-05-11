@@ -64,13 +64,16 @@ export default function Tour() {
         {/* Dots */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 8, margin: '28px 0 32px' }}>
           {SLIDES.map((_, i) => (
-            <div
+            <button
               key={i}
+              type="button"
               onClick={() => setSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
               style={{
                 width: i === slide ? 20 : 8, height: 8, borderRadius: 4, cursor: 'pointer',
                 background: i === slide ? 'var(--sage)' : 'var(--sage-pale)',
                 transition: 'all 0.3s ease',
+                padding: 0, border: 'none',
               }}
             />
           ))}

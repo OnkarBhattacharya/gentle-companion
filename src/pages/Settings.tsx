@@ -19,7 +19,10 @@ export default function Settings() {
   const [contactPhone, setContactPhone] = useState(trustedContact?.phone || '')
   const [contactSaved, setContactSaved] = useState(false)
 
-  const handleDelete = () => deleteAllData()
+  const handleDelete = () => {
+    deleteAllData()
+    navigate('/welcome')
+  }
 
   const handleSaveContact = () => {
     if (!contactName.trim() || !contactPhone.trim()) return

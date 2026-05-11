@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react'
 
 export type MoodWeather = 'stormy' | 'cloudy' | 'foggy' | 'partly-sunny' | 'sunny'
 
@@ -56,6 +56,15 @@ const Ctx = createContext<AppState | null>(null)
 
 const today = () => new Date().toISOString().split('T')[0]
 
+const isoWeek = (dateStr: string): string => {
+  const d = new Date(dateStr)
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7)
+  const week1 = new Date(d.getFullYear(), 0, 4)
+  const wk = Math.round(((d.getTime() - week1.getTime()) / 86400000 + (week1.getDay() + 6) % 7) / 7) + 1
+  return `${d.getFullYear()}-W${wk}`
+}
+
 const readIfConsented = <T,>(key: string, fallback: T): T => {
   if (localStorage.getItem('gc_consent') !== 'true') return fallback
   try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback } catch { return fallback }
@@ -89,51 +98,55 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => { if (consentGiven) localStorage.setItem('gc_trusted', JSON.stringify(trustedContact)) }, [trustedContact, consentGiven])
   useEffect(() => { if (consentGiven) localStorage.setItem('gc_notifs', String(notificationsEnabled)) }, [notificationsEnabled, consentGiven])
 
-  const giveConsent = () => {
+  const giveConsent = useCallback(() => {
     localStorage.setItem('gc_consent', 'true')
     setConsentGiven(true)
-  }
+  }, [])
 
-  const deleteAllData = () => {
+  const deleteAllData = useCallback(() => {
     const keys = ['gc_consent', 'gc_name', 'gc_onboarded', 'gc_tour_done', 'gc_theme',
       'gc_checkins', 'gc_glimmers', 'gc_tasks', 'gc_reflect', 'gc_letter', 'gc_trusted', 'gc_notifs']
     keys.forEach(k => localStorage.removeItem(k))
     setConsentGiven(false); setUserName(''); setOnboarded(false); setTourDone(false)
     setTheme('light'); setCheckIns([]); setGlimmers([]); setCompletedTasks([])
     setReflectSessions([]); setLetterToSelf(''); setTrustedContact(null); setNotificationsEnabled(false)
-  }
+  }, [])
 
-  const todayCheckIn = checkIns.find(c => c.date === today()) || null
+  const todayStr = today()
 
-  const addCheckIn = (c: CheckIn) =>
-    setCheckIns(prev => [...prev.filter(x => x.date !== c.date), c])
+  const todayCheckIn = useMemo(
+    () => checkIns.find(c => c.date === todayStr) ?? null,
+    [checkIns, todayStr]
+  )
 
-  const addGlimmer = (text: string) =>
-    setGlimmers(prev => [...prev, { id: Date.now().toString(), date: today(), text }])
+  const addCheckIn = useCallback((c: CheckIn) =>
+    setCheckIns(prev => [...prev.filter(x => x.date !== c.date), c]), [])
 
-  const completeTask = (id: string) => {
+  const addGlimmer = useCallback((text: string) =>
+    setGlimmers(prev => [...prev, { id: Date.now().toString(), date: today(), text }]), [])
+
+  const completeTask = useCallback((id: string) => {
     const key = `${today()}::${id}`
     setCompletedTasks(prev => prev.includes(key) ? prev : [...prev, key])
-  }
+  }, [])
 
-  const todayTasksDone = completedTasks
-    .filter(k => k.startsWith(today() + '::'))
-    .map(k => k.slice(today().length + 2))
+  const todayTasksDone = useMemo(() =>
+    completedTasks
+      .filter(k => k.startsWith(todayStr + '::'))
+      .map(k => k.slice(todayStr.length + 2)),
+    [completedTasks, todayStr]
+  )
 
-  const saveReflectSession = (answers: string[]) =>
-    setReflectSessions(prev => [...prev, { id: Date.now().toString(), date: today(), answers }])
+  const saveReflectSession = useCallback((answers: string[]) =>
+    setReflectSessions(prev => [...prev, { id: Date.now().toString(), date: today(), answers }]), [])
 
-  const saveLetterToSelf = (text: string) => setLetterToSelf(text)
+  const saveLetterToSelf = useCallback((text: string) => setLetterToSelf(text), [])
 
-  // Garden count: one element per week of engagement (unique ISO weeks with any check-in)
-  const gardenCount = (() => {
-    const weeks = new Set(checkIns.map(c => {
-      const d = new Date(c.date)
-      const jan1 = new Date(d.getFullYear(), 0, 1)
-      return `${d.getFullYear()}-W${Math.ceil(((d.getTime() - jan1.getTime()) / 86400000 + jan1.getDay() + 1) / 7)}`
-    }))
+  // Garden count: one element per ISO week with any check-in (never lost)
+  const gardenCount = useMemo(() => {
+    const weeks = new Set(checkIns.map(c => isoWeek(c.date)))
     return weeks.size
-  })()
+  }, [checkIns])
 
   return (
     <Ctx.Provider value={{
@@ -141,7 +154,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       completedTasks, reflectSessions, letterToSelf, trustedContact, notificationsEnabled,
       todayCheckIn, todayTasksDone, gardenCount,
       setUserName, setOnboarded, setTourDone, giveConsent,
-      toggleTheme: () => setTheme(t => t === 'light' ? 'dark' : 'light'),
+      toggleTheme: useCallback(() => setTheme(t => t === 'light' ? 'dark' : 'light'), []),
       addCheckIn, addGlimmer, completeTask, saveReflectSession,
       saveLetterToSelf, setTrustedContact, setNotificationsEnabled, deleteAllData,
     }}>

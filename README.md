@@ -259,12 +259,13 @@ App
 | Routing | React Router DOM | 6.20 |
 | Icons | Lucide React | 0.294 |
 | Build Tool | Vite | 8.x |
+| PWA / Service Worker | vite-plugin-pwa (Workbox) | 1.x |
 | Styling | CSS Custom Properties (no CSS-in-JS library) | — |
-| State | React Context + useState | — |
+| State | React Context + useState + useCallback + useMemo | — |
 | Persistence | Browser localStorage | — |
 | Fonts | System font stack (no external CDN) | — |
 
-**Zero runtime dependencies** beyond React, React Router, and Lucide. No Redux, no Zustand, no Tailwind, no styled-components.
+**Minimal runtime dependencies** — React, React Router, Lucide, and vite-plugin-pwa (dev). No Redux, no Zustand, no Tailwind, no styled-components.
 
 ---
 
@@ -297,7 +298,7 @@ Opens at `http://localhost:5173`. Hot module replacement is enabled.
 npm run build
 ```
 
-Output goes to `dist/`. The build is a fully static SPA — deploy to any static host (Netlify, Vercel, S3 + CloudFront, GitHub Pages).
+Output goes to `dist/`. The build is a fully static SPA with a generated service worker (`dist/sw.js`) — deploy to any static host (Netlify, Vercel, S3 + CloudFront, GitHub Pages).
 
 ### Preview Production Build
 
@@ -308,8 +309,10 @@ npm run preview
 ### Type Check
 
 ```bash
-npx tsc --noEmit
+node_modules/typescript/bin/tsc --noEmit
 ```
+
+> Note: use the local TypeScript binary directly — the global `npx tsc` may resolve a different version.
 
 ---
 
@@ -318,9 +321,13 @@ npx tsc --noEmit
 ```
 gentle-companion/
 ├── index.html                  # Entry HTML — CSP meta tag, no external CDN
-├── vite.config.ts              # Vite config (React plugin)
+├── vite.config.ts              # Vite config (React plugin + VitePWA)
 ├── tsconfig.json               # TypeScript strict mode
 ├── package.json
+├── public/
+│   ├── manifest.json           # PWA manifest (separate any + maskable icon entries)
+│   ├── icon-192.png
+│   └── icon-512.png
 └── src/
     ├── main.tsx                # React root mount
     ├── App.tsx                 # Router + AppProvider + route guards
@@ -328,25 +335,27 @@ gentle-companion/
     │
     ├── context/
     │   └── AppContext.tsx      # Single source of truth — all state, persistence, GDPR gate
+    │                           # Actions memoised with useCallback; derived state with useMemo
     │
     ├── data/
     │   └── content.ts          # Static therapeutic content (tasks, grounding, moods, prompts)
     │
     ├── components/
-    │   ├── CrisisButton.tsx    # Always-visible crisis panel with trusted contact SMS
+    │   ├── CrisisButton.tsx    # Always-visible crisis panel — region-detected lines (17 countries)
     │   └── NavBar.tsx          # Fixed bottom navigation (7 items)
     │
     └── pages/
         ├── Onboarding.tsx      # 5-step onboarding (welcome, consent, name, reasons, calibration)
-        ├── Tour.tsx            # 3-screen guided tour (shown once)
+        ├── Tour.tsx            # 3-screen guided tour (shown once) — dots are keyboard-accessible buttons
         ├── Home.tsx            # Daily check-in, adaptive quiet mode, quick actions
-        ├── Plan.tsx            # Daily micro-plan (3 tasks, swap, complete)
+        ├── Plan.tsx            # Daily micro-plan — date-seeded selection, consistent all day
         ├── Toolkit.tsx         # Box breathing pacer + grounding exercises
         ├── Glimmers.tsx        # Glimmer catcher (add + list)
         ├── Reflect.tsx         # Thought untangler (CBT) + mood history chart
         ├── Insights.tsx        # Weekly mood chart, glimmer correlation, virtual garden
         ├── Letter.tsx          # Letter to myself (shown on low-energy days)
-        └── Settings.tsx        # Theme, notifications, trusted contact, data deletion
+        ├── Settings.tsx        # Theme, notifications, trusted contact, data deletion
+        └── Guide.tsx           # In-app user guide (accessible from Settings)
 ```
 
 ---
@@ -370,7 +379,7 @@ All keys are prefixed `gc_` to avoid collisions. Nothing is written until `gc_co
 | `gc_trusted` | `{ name, phone } \| null` | Trusted contact for crisis panel. |
 | `gc_notifs` | `"true" \| "false"` | Gentle reminder opt-in preference. |
 
-**Deleting all data** removes every `gc_*` key and resets all React state to defaults, effectively returning the app to a fresh install state.
+**Deleting all data** removes every `gc_*` key, resets all React state to defaults, and navigates to `/welcome` — returning the app to a fresh install state.
 
 ---
 
@@ -464,7 +473,7 @@ All animations use `ease` or `ease-in-out` with durations of 200–500ms. No jar
 - [ ] HealthKit / Google Fit integration
 - [ ] PHQ-9 voluntary self-assessment (8-week check-in)
 - [ ] Data export (JSON download for therapist sharing)
-- [ ] PWA manifest + service worker (offline support)
+- [x] PWA manifest + service worker (offline support) — shipped in v1.0
 
 ### Phase 3 (future)
 - [ ] Moderated peer support circles

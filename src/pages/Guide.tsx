@@ -75,9 +75,10 @@ Past sessions are saved and viewable below the tool.`,
     heading: '💙 Crisis Button',
     body: `A "I need help" button is always visible on every screen. Tapping it opens a panel with:
 
-• 988 Suicide & Crisis Lifeline (call or text)
-• Samaritans and IASP international lines
+• Crisis lines automatically matched to your region (17 countries supported)
+• Call and SMS options for each helpline
 • A pre-written SMS to your trusted contact (if configured)
+• "Other countries" toggle to browse all available helplines
 
 This button is never hidden and requires no navigation to reach.`,
   },

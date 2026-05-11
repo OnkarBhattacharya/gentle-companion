@@ -5,13 +5,21 @@ import { CrisisButton } from '../components/CrisisButton'
 import { NavBar } from '../components/NavBar'
 import { RefreshCw, Check } from 'lucide-react'
 
-function pickThree(): typeof TASKS {
-  return [...TASKS].sort(() => Math.random() - 0.5).slice(0, 3)
+// Deterministic daily selection: same 3 tasks all day, changes at midnight
+function getDailyTasks(): typeof TASKS {
+  const seed = new Date().toISOString().split('T')[0]
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0
+  return [...TASKS]
+    .map((t, i) => ({ t, sort: (hash * (i + 1)) >>> 0 }))
+    .sort((a, b) => a.sort - b.sort)
+    .slice(0, 3)
+    .map(x => x.t)
 }
 
 export default function Plan() {
   const { completeTask, todayTasksDone } = useApp()
-  const [tasks, setTasks] = useState(() => pickThree())
+  const [tasks, setTasks] = useState(() => getDailyTasks())
   const [swapped, setSwapped] = useState<Set<number>>(new Set())
   const [celebrating, setCelebrating] = useState<string | null>(null)
 

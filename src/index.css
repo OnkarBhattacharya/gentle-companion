@@ -102,7 +102,7 @@ input, textarea {
   font-size: max(1rem, 16px);
 }
 
-textarea { font-size: 0.95rem; }
+textarea { font-size: max(0.95rem, 16px); }
 
 input:focus-visible, textarea:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
 

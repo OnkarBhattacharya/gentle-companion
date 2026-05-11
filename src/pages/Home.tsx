@@ -125,6 +125,9 @@ export default function Home() {
                 {MOOD_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
+                    type="button"
+                    aria-pressed={mood === opt.value}
+                    aria-label={opt.label}
                     onClick={() => setMood(opt.value as MoodWeather)}
                     style={{
                       padding: '8px 14px', borderRadius: 50, fontSize: '0.85rem', fontWeight: 600,
