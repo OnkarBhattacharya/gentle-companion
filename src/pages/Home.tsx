@@ -58,7 +58,7 @@ export default function Home() {
             <div style={{ fontSize: '0.85rem', color: 'var(--text-soft)' }}>{greeting()}</div>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{userName || 'friend'} 🌿</h1>
           </div>
-          <button onClick={toggleTheme} className="btn-ghost" style={{ padding: '8px', borderRadius: '50%' }}>
+          <button onClick={toggleTheme} className="btn-ghost" aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} style={{ padding: '8px', borderRadius: '50%' }}>
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
         </div>
@@ -114,6 +114,7 @@ export default function Home() {
               </div>
               <input
                 type="range" min={1} max={10} value={energy}
+                aria-label="Energy level, 1 is heaviest, 10 is lightest"
                 onChange={e => setEnergy(Number(e.target.value))}
               />
               <div className="slider-label"><span>Very heavy</span><span>Lighter</span></div>

@@ -48,7 +48,7 @@ export default function Glimmers() {
           <div className="card fade-in" style={{ marginBottom: 20 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <span style={{ fontWeight: 700 }}>What's your glimmer?</span>
-              <button className="btn-ghost" onClick={() => setAdding(false)} style={{ padding: '4px 8px' }}>
+              <button className="btn-ghost" onClick={() => setAdding(false)} aria-label="Cancel adding glimmer" style={{ padding: '4px 8px' }}>
                 <X size={18} />
               </button>
             </div>

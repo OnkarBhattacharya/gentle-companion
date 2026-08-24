@@ -71,7 +71,7 @@ export default function Settings() {
                 {theme === 'dark' ? 'Dark mode' : 'Light mode'}
               </div>
             </div>
-            <button onClick={toggleTheme} className="btn-ghost" style={{ padding: '10px', borderRadius: '50%' }}>
+            <button onClick={toggleTheme} className="btn-ghost" aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} style={{ padding: '10px', borderRadius: '50%' }}>
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
           </div>
@@ -88,6 +88,8 @@ export default function Settings() {
             </div>
             <button
               onClick={handleToggleNotifications}
+              aria-label={notificationsEnabled ? 'Turn off gentle reminders' : 'Turn on gentle reminders'}
+              aria-pressed={notificationsEnabled}
               style={{
                 padding: '10px', borderRadius: '50%', flexShrink: 0,
                 background: notificationsEnabled ? 'var(--sage-pale)' : 'transparent',

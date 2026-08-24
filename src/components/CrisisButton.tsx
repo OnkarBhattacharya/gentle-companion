@@ -103,7 +103,7 @@ export function CrisisButton() {
       {open && (
         <div className="modal-overlay" onClick={() => setOpen(false)}>
           <div className="modal-sheet" onClick={e => e.stopPropagation()}>
-            <button className="btn-ghost" style={{ float: 'right', padding: '4px 8px' }} onClick={() => setOpen(false)}>
+            <button className="btn-ghost" style={{ float: 'right', padding: '4px 8px' }} aria-label="Close help panel" onClick={() => setOpen(false)}>
               <X size={20} />
             </button>
 

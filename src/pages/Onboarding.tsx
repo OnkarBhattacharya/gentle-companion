@@ -134,7 +134,7 @@ export default function Onboarding() {
               {energy <= 3 ? 'Very heavy' : energy <= 5 ? 'Heavy' : energy <= 7 ? 'Okay' : 'Lighter'}
             </span>
           </div>
-          <input type="range" min={1} max={10} value={energy} onChange={e => setEnergy(Number(e.target.value))} />
+          <input type="range" min={1} max={10} value={energy} aria-label="Energy level, 1 is heaviest, 10 is lightest" onChange={e => setEnergy(Number(e.target.value))} />
           <div className="slider-label"><span>Very heavy</span><span>Lighter</span></div>
         </div>
 

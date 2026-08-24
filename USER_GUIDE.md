@@ -28,7 +28,6 @@ Each day starts with a gentle check-in on the Home screen:
 
 - **Energy slider (1–10)** — How heavy does today feel?
 - **Mood weather** — Pick from stormy → sunny to describe your mood.
-- **Optional note** — A few words, or nothing at all.
 - **"Just let me in"** — Skip the check-in entirely. No guilt.
 
 > If you log energy ≤ 3, the app switches to **Quiet Mode** — a simpler layout with just two gentle options, and your Letter to Myself surfaced if you've written one.
@@ -99,9 +98,10 @@ Write a compassionate note to yourself on a stable day. On low-energy days (ener
 
 A **"I need help"** button is always visible on every screen. Tapping it opens a panel with:
 
-- **988 Suicide & Crisis Lifeline** (call or text)
-- **Samaritans** and **IASP** international lines
+- **Crisis lines matched to your region** (17 countries supported, detected from your device timezone — no location permission needed)
+- **Call and SMS options** for each helpline
 - A **pre-written SMS** to your trusted contact (if configured)
+- An **"Other countries" toggle** to browse all available helplines
 
 This button is never hidden and requires no navigation to reach.
 

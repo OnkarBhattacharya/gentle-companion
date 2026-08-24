@@ -254,9 +254,9 @@ App
 
 | Layer | Technology | Version |
 |---|---|---|
-| UI Framework | React | 18.2 |
-| Language | TypeScript | 5.3 |
-| Routing | React Router DOM | 6.20 |
+| UI Framework | React | 18.3 |
+| Language | TypeScript | 5.9 |
+| Routing | React Router DOM | 6.30 |
 | Icons | Lucide React | 0.294 |
 | Build Tool | Vite | 8.x |
 | PWA / Service Worker | vite-plugin-pwa (Workbox) | 1.x |
@@ -458,10 +458,10 @@ All animations use `ease` or `ease-in-out` with durations of 200–500ms. No jar
 ### Accessibility
 
 - `focus-visible` outlines on all interactive elements (keyboard navigation safe)
-- `aria-label` on all icon-only buttons
+- `aria-label` on icon-only buttons
 - Semantic HTML (`<nav>`, `<h1>`–`<h3>`, `<button>`, `<a>`)
 - No time-limited interactions
-- Colour contrast meets WCAG AA for all text/background combinations
+- Known gap: the `--text-soft` colour (`#9a9590`) is below WCAG AA contrast on white when used for body copy — a palette adjustment is planned
 
 ---
 

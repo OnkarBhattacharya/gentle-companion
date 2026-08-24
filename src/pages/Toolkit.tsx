@@ -51,8 +51,11 @@ function BreathingPacer() {
       <h3 style={{ fontWeight: 700, marginBottom: 6 }}>Box Breathing</h3>
       <p style={{ color: 'var(--text-soft)', fontSize: '0.85rem', marginBottom: 28 }}>4-4-4-4 rhythm to calm your nervous system</p>
 
-      <div
+      <button
+        type="button"
         onClick={() => setActive(a => !a)}
+        aria-pressed={active}
+        aria-label={active ? 'Stop box breathing' : 'Start box breathing'}
         style={{
           width: 120, height: 120, borderRadius: '50%',
           background: 'var(--sky-pale)',
@@ -67,7 +70,7 @@ function BreathingPacer() {
         <span style={{ fontSize: active ? '1.8rem' : '1.4rem', fontWeight: 700, color: 'var(--sky)' }}>
           {active ? count : '▶'}
         </span>
-      </div>
+      </button>
 
       <p style={{ fontWeight: 600, color: 'var(--text-mid)', fontSize: '1rem', marginBottom: 8 }}>{phaseLabel}</p>
       {cycles > 0 && <p style={{ color: 'var(--sage)', fontSize: '0.85rem' }}>🌿 {cycles} cycle{cycles > 1 ? 's' : ''} complete</p>}
@@ -111,7 +114,7 @@ function GroundingCard({ exercise }: { exercise: typeof GROUNDING[0] }) {
           <div className="modal-sheet" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h2 style={{ fontWeight: 700, fontSize: '1.2rem' }}>{exercise.emoji} {exercise.title}</h2>
-              <button className="btn-ghost" onClick={reset} style={{ padding: '4px 8px' }}><X size={20} /></button>
+              <button className="btn-ghost" onClick={reset} aria-label="Close exercise" style={{ padding: '4px 8px' }}><X size={20} /></button>
             </div>
 
             <div style={{ marginBottom: 24 }}>

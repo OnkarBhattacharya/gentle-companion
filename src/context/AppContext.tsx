@@ -65,13 +65,21 @@ const isoWeek = (dateStr: string): string => {
   return `${d.getFullYear()}-W${wk}`
 }
 
+// Storage can throw (blocked cookies, private mode, quota) — never let that crash the app.
+const safeGet = (key: string): string | null => {
+  try { return localStorage.getItem(key) } catch { return null }
+}
+const safeSet = (key: string, value: string): void => {
+  try { localStorage.setItem(key, value) } catch { /* storage unavailable — state stays in memory */ }
+}
+
 const readIfConsented = <T,>(key: string, fallback: T): T => {
-  if (localStorage.getItem('gc_consent') !== 'true') return fallback
-  try { return JSON.parse(localStorage.getItem(key) || 'null') ?? fallback } catch { return fallback }
+  if (safeGet('gc_consent') !== 'true') return fallback
+  try { return JSON.parse(safeGet(key) || 'null') ?? fallback } catch { return fallback }
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [consentGiven, setConsentGiven] = useState(() => localStorage.getItem('gc_consent') === 'true')
+  const [consentGiven, setConsentGiven] = useState(() => safeGet('gc_consent') === 'true')
   const [userName, setUserName] = useState(() => readIfConsented('gc_name', ''))
   const [onboarded, setOnboarded] = useState(() => readIfConsented('gc_onboarded', false))
   const [tourDone, setTourDone] = useState(() => readIfConsented('gc_tour_done', false))
@@ -86,27 +94,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme) }, [theme])
 
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_name', userName) }, [userName, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_onboarded', String(onboarded)) }, [onboarded, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_tour_done', String(tourDone)) }, [tourDone, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_theme', theme) }, [theme, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_checkins', JSON.stringify(checkIns)) }, [checkIns, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_glimmers', JSON.stringify(glimmers)) }, [glimmers, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_tasks', JSON.stringify(completedTasks)) }, [completedTasks, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_reflect', JSON.stringify(reflectSessions)) }, [reflectSessions, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_letter', letterToSelf) }, [letterToSelf, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_trusted', JSON.stringify(trustedContact)) }, [trustedContact, consentGiven])
-  useEffect(() => { if (consentGiven) localStorage.setItem('gc_notifs', String(notificationsEnabled)) }, [notificationsEnabled, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_name', userName) }, [userName, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_onboarded', String(onboarded)) }, [onboarded, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_tour_done', String(tourDone)) }, [tourDone, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_theme', theme) }, [theme, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_checkins', JSON.stringify(checkIns)) }, [checkIns, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_glimmers', JSON.stringify(glimmers)) }, [glimmers, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_tasks', JSON.stringify(completedTasks)) }, [completedTasks, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_reflect', JSON.stringify(reflectSessions)) }, [reflectSessions, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_letter', letterToSelf) }, [letterToSelf, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_trusted', JSON.stringify(trustedContact)) }, [trustedContact, consentGiven])
+  useEffect(() => { if (consentGiven) safeSet('gc_notifs', String(notificationsEnabled)) }, [notificationsEnabled, consentGiven])
 
   const giveConsent = useCallback(() => {
-    localStorage.setItem('gc_consent', 'true')
+    safeSet('gc_consent', 'true')
     setConsentGiven(true)
   }, [])
 
   const deleteAllData = useCallback(() => {
     const keys = ['gc_consent', 'gc_name', 'gc_onboarded', 'gc_tour_done', 'gc_theme',
       'gc_checkins', 'gc_glimmers', 'gc_tasks', 'gc_reflect', 'gc_letter', 'gc_trusted', 'gc_notifs']
-    keys.forEach(k => localStorage.removeItem(k))
+    keys.forEach(k => { try { localStorage.removeItem(k) } catch { /* ignore */ } })
     setConsentGiven(false); setUserName(''); setOnboarded(false); setTourDone(false)
     setTheme('light'); setCheckIns([]); setGlimmers([]); setCompletedTasks([])
     setReflectSessions([]); setLetterToSelf(''); setTrustedContact(null); setNotificationsEnabled(false)
